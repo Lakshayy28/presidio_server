@@ -110,6 +110,41 @@ Then update the VS Code setting:
 
 Same as `/sanitize` but always returns `anonymized_text` — does not return `was_modified`.
 
+## Testing
+
+The `bdd/` directory contains a full BDD + regression test suite (225 tests) covering financial PII, developer secrets, infrastructure credentials, CI/CD tokens, custom recognizers, file formats, and Splunk logs.
+
+### 1. Install test dependencies
+
+```bash
+pip install -r bdd/requirements.txt
+```
+
+### 2. Start the server (required before running tests)
+
+```bash
+uvicorn main:app --host 0.0.0.0 --port 8000
+```
+
+### 3. Run the tests
+
+```bash
+cd bdd
+pytest tests/ -v
+```
+
+Reports are written to `bdd/reports/`:
+- `test_report.html` — self-contained HTML report
+- `allure-results/` — raw data for Allure (generate with `allure serve reports/allure-results`)
+
+Run a specific marker subset:
+
+```bash
+pytest tests/ -v -m financial       # financial PII only
+pytest tests/ -v -m developer       # developer secrets only
+pytest tests/ -v -m smoke           # fast smoke subset
+```
+
 ## Running with Docker *(optional)*
 
 ```dockerfile

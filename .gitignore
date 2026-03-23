@@ -1,0 +1,7 @@
+node_modules
+prompts
+test.yaml
+**/__pycache__/
+*.pyc
+**/.pytest_cache/
+bdd/reports
