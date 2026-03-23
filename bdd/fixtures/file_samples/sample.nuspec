@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>SecureCorp.Payments</id>
+    <version>2.1.0</version>
+    <authors>devops@securecorp.com</authors>
+    <owners>SecureCorp</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Payment gateway library</description>
+    <repository type="git" url="https://github.com/securecorp/payments" />
+    <!-- Contact: +1-555-867-5309 -->
+    <!-- DB: postgres://admin:Passw0rd!@db.prod.internal:5432/payments -->
+  </metadata>
+</package>

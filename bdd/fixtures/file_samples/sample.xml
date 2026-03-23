@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- web.config / Spring application context — embedded secrets for sanitizer testing -->
+<configuration>
+
+  <appSettings>
+    <add key="AppContactEmail"  value="alice.johnson@securecorp.com" />
+    <add key="SupportPhone"     value="(415) 555-0192" />
+    <add key="StripeSecretKey"  value="sk_live_ABCDEFGHIJKLMNOPQRSTUVWXabcdefgh" />
+    <add key="SendGridApiKey"   value="SG.ABCDEFGHIJklmnopqrst.ABCDEFGHIJ0123456789abcdefghij0123456789AB" />
+    <add key="GitHubToken"      value="ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef12" />
+    <add key="VaultToken"       value="hvs.CAESIABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnop" />
+  </appSettings>
+
+  <connectionStrings>
+    <add name="PaymentsDB"
+         connectionString="Server=prod-rds.internal;Database=payments;User Id=dbadmin;Password=Sup3rS3cr3t_P@ssw0rd_2024;" />
+    <add name="AzureStorage"
+         connectionString="DefaultEndpointsProtocol=https;AccountName=paymentsstorage;AccountKey=abc123base64encodedkeyABCDEFGHIJKLMNabcde==;EndpointSuffix=core.windows.net" />
+  </connectionStrings>
+
+  <aws>
+    <accessKeyId>AKIAIOSFODNN7EXAMPLE</accessKeyId>
+    <secretAccessKey>wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY</secretAccessKey>
+    <region>us-east-1</region>
+  </aws>
+
+  <!-- Internal infrastructure -->
+  <!-- DB primary host: payments-db-primary.prod.internal -->
+  <!-- Management NIC MAC: 00:1A:2B:3C:4D:5E -->
+  <!-- Service mesh IP: 10.240.0.15 -->
+
+</configuration>

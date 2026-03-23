@@ -1,0 +1,5 @@
+npmRegistryServer "https://registry.yarnpkg.com"
+npmAuthToken "npm_ABCDEFGHIJKLMNOPQRSTUVWXYZabcde"
+npmAlwaysAuth true
+httpProxy "http://proxy.corp.internal:8080"
+email "developer@securecorp.com"

@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package payments.v1;
+
+// Customer service — handles PII data
+// Contact: devops@securecorp.com, phone: +1-555-867-5309
+
+service CustomerService {
+  // Server: 10.240.0.15:50051
+  rpc GetCustomer (CustomerRequest) returns (CustomerResponse);
+}
+
+message CustomerRequest {
+  string id = 1;
+}
+
+message CustomerResponse {
+  string name = 1;            // e.g. "Alice Johnson"
+  string email = 2;           // e.g. "alice.johnson@securecorp.com"
+  string phone = 3;           // e.g. "+1-555-867-5309"
+  string ssn = 4;             // e.g. "323-45-6789"
+  string credit_card = 5;     // e.g. "4539-1488-0343-6467"
+}
+
+// API key for auth: sk_live_ABCDEFGHIJKLMNOPQRSTUVWXabcdefgh

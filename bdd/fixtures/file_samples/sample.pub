@@ -1,0 +1,3 @@
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDG7Rd0ABCDEFGHIJKLMNOPQRSTUVabcdefghijklmnopqrstuvwxyz0123456789 developer@securecorp.com
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnop admin@securecorp.com
+# SSH key for server 10.240.0.15 — owned by Alex Turner, phone +1-555-867-5309

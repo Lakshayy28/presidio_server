@@ -1,0 +1,9 @@
+credentials "app.terraform.io" {
+  token = "ABCDEFGHIJklmno.atlasv1.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789AB"
+}
+
+plugin_cache_dir = "/home/devops/.terraform.d/plugin-cache"
+
+credentials "registry.securecorp.com" {
+  token = "ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef12"
+}

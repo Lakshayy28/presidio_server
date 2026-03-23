@@ -1,0 +1,8 @@
+@echo off
+REM Windows command script with embedded secrets
+
+SET DATABASE_PASSWORD=Sup3rS3cr3t_P@ssw0rd_2024
+SET GITHUB_TOKEN=ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef12
+SET ADMIN_EMAIL=admin@securecorp.com
+SET CONTACT_PHONE=+1-555-867-5309
+SET CACHE_IP=10.240.0.15

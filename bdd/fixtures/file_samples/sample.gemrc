@@ -1,0 +1,13 @@
+---
+:backtrace: false
+:bulk_threshold: 1000
+:sources:
+- https://rubygems.org/
+- https://gems.securecorp.com/
+:update_sources: true
+:verbose: true
+gem: --no-document
+:credentials:
+  rubygems_api_key: ABCDEFGHIJKLMNOPabcdefghijklmnop12345678
+  securecorp: sk_live_ABCDEFGHIJKLMNOPQRSTUVWXabcdefgh
+  admin_email: devops@securecorp.com

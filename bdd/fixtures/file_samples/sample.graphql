@@ -1,0 +1,20 @@
+type Query {
+  # Get customer by ID — returns PII fields
+  customer(id: ID!): Customer
+  # Search by email: alice.johnson@securecorp.com
+  customerByEmail(email: String!): Customer
+}
+
+type Customer {
+  id: ID!
+  name: String!        # e.g. "Alice Johnson"
+  email: String!       # e.g. "alice.johnson@securecorp.com"
+  phone: String        # e.g. "+1-555-867-5309"
+  ssn: String          # e.g. "323-45-6789"
+  creditCard: String   # e.g. "4539-1488-0343-6467"
+}
+
+type Mutation {
+  # API key required: sk_live_ABCDEFGHIJKLMNOPQRSTUVWXabcdefgh
+  createCustomer(input: CustomerInput!): Customer
+}

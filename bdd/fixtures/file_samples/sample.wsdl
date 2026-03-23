@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             name="CustomerService"
+             targetNamespace="http://api.securecorp.com/customers">
+  <!--
+    WSDL for Customer Service
+    Admin: devops@securecorp.com
+    Phone: +1-555-867-5309
+    Server: 10.240.0.15
+  -->
+  <service name="CustomerService">
+    <port name="CustomerPort" binding="tns:CustomerBinding">
+      <soap:address location="https://api.securecorp.com/customers"/>
+    </port>
+  </service>
+  <!-- API key: sk_live_ABCDEFGHIJKLMNOPQRSTUVWXabcdefgh -->
+  <!-- DB: postgres://admin:Passw0rd!@db.prod.internal:5432/payments -->
+</definitions>

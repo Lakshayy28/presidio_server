@@ -1,0 +1,12 @@
+Incident Report — Payment Gateway Downtime
+Date: 2024-03-15
+
+At 08:30 UTC, the payment gateway at 10.240.0.15 became unreachable.
+Root cause: expired SSL certificate for payments-api.corp.internal.
+
+On-call engineer: Alice Johnson (alice.johnson@securecorp.com, +1-555-867-5309)
+Escalated to: Bob Williams (bob.williams@securecorp.com)
+
+Customer impacted: SSN 323-45-6789, credit card ending 4539-1488-0343-6467.
+Database connection string: postgres://admin:Passw0rd!@db.prod.internal:5432/payments
+AWS key used for recovery: AKIAIOSFODNN7EXAMPLE

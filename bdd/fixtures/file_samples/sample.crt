@@ -1,0 +1,10 @@
+-----BEGIN CERTIFICATE-----
+MIIDazCCAlOgAwIBAgIUABCDEFGHIJKLMNOPQRSTUVWXYZA0GCSqGSIb3DQEBCwUA
+MDAxCzAJBgNVBAYTAlVTMRAwDgYDVQQHDAdTZWF0dGxlMQ8wDQYDVQQKDAZDb3Jw
+ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789AB
+-----END CERTIFICATE-----
+
+# Issued to: payments-api.corp.internal
+# Admin: sarah.connor@securecorp.com
+# Admin phone: +1-555-867-5309
+# Server: 10.240.0.20

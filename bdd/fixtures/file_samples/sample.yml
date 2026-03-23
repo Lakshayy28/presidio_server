@@ -1,0 +1,17 @@
+# Docker Compose — service definitions with embedded secrets
+version: "3.9"
+services:
+  api:
+    image: registry.corp.internal/payments-api:latest
+    environment:
+      DATABASE_URL: "postgres://admin:Passw0rd!@db.prod.internal:5432/payments"
+      API_KEY: "sk_live_ABCDEFGHIJKLMNOPQRSTUVWXabcdefgh"
+      ADMIN_EMAIL: "bob.williams@securecorp.com"
+      CONTACT_PHONE: "+1-555-867-5309"
+    ports:
+      - "8080:8080"
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: "Sup3rS3cr3t_P@ssw0rd"
+      POSTGRES_HOST: "10.240.0.20"

@@ -1,0 +1,10 @@
+<Project>
+  <!-- MSBuild property sheet with secrets -->
+  <PropertyGroup>
+    <DbConnection>Server=db.prod.internal;Database=payments;User Id=admin;Password=Sup3rS3cr3t_P@ssw0rd;</DbConnection>
+    <ApiKey>sk_live_ABCDEFGHIJKLMNOPQRSTUVWXabcdefgh</ApiKey>
+    <AdminEmail>devops@securecorp.com</AdminEmail>
+    <SupportPhone>+1-555-867-5309</SupportPhone>
+    <CacheHost>10.240.0.15</CacheHost>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,19 @@
+# pyproject.toml — project configuration with embedded secrets
+
+[project]
+name = "payments-service"
+version = "2.1.0"
+authors = [
+    { name = "Jane Mitchell", email = "jane.mitchell@securecorp.com" },
+]
+
+[tool.pytest.ini_options]
+env = [
+    "DATABASE_URL=postgres://admin:Passw0rd!@db.prod.internal:5432/payments",
+    "SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+]
+
+[deploy]
+api_token = "ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef12"
+contact_phone = "+1-555-867-5309"
+server_ip = "10.240.0.15"

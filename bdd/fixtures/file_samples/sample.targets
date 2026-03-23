@@ -1,0 +1,11 @@
+<Project>
+  <!-- MSBuild targets with embedded credentials -->
+  <Target Name="Deploy" AfterTargets="Build">
+    <Message Text="Deploying to db.prod.internal with password=Sup3rS3cr3t_P@ssw0rd_2024" />
+    <Message Text="Contact: devops@securecorp.com, Phone: +1-555-867-5309" />
+    <Exec Command="curl -H 'Authorization: Bearer sk_live_ABCDEFGHIJKLMNOPQRSTUVWXabcdefgh' https://api.securecorp.com/deploy" />
+  </Target>
+  <PropertyGroup>
+    <ServerIp>10.240.0.15</ServerIp>
+  </PropertyGroup>
+</Project>

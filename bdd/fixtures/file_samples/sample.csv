@@ -1,0 +1,6 @@
+customer_id,first_name,last_name,email,phone,ssn,credit_card,iban,dob,address
+CUST-001,John,Smith,john.smith@securecorp.com,(415) 555-0192,323-45-6789,4532015112830366,GB29NWBK60161331926819,1985-07-14,"42 Maple Street, San Francisco, CA"
+CUST-002,Alice,Johnson,alice.johnson@corp.com,(212) 555-0187,219-09-9999,5425233430109903,DE89370400440532013000,1990-03-28,"88 Oak Ave, New York, NY"
+CUST-003,Robert,Williams,r.williams@example.net,+1-800-555-0199,321-54-9870,374245455400126,FR7630006000011234567890189,1978-11-02,"7 Elm Court, Chicago, IL"
+CUST-004,Maria,Garcia,m.garcia@testbiz.org,(305) 555-0143,456-78-0123,4916338506082832,ES9121000418450200051332,1995-01-19,"15 Pine Rd, Miami, FL"
+CUST-005,James,Brown,j.brown@bigcorp.com,(617) 555-0176,567-89-1234,340000000000009,IT60X0542811101000000123456,1982-06-30,"3 Cedar Lane, Boston, MA"

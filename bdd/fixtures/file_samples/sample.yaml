@@ -1,0 +1,38 @@
+# Kubernetes Helm values — contains embedded secrets for sanitizer testing
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payments-service-config
+  namespace: production
+data:
+  APP_ENV: production
+  APP_CONTACT: alice.johnson@securecorp.com
+  SUPPORT_PHONE: "(415) 555-0192"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments-service
+  namespace: production
+spec:
+  replicas: 3
+  template:
+    spec:
+      serviceAccountName: payments-service-sa
+      containers:
+        - name: payments
+          image: registry.corp.internal:5000/payments:v2.1.0
+          env:
+            - name: DATABASE_URL
+              value: "postgres://admin:Passw0rd!@prod-db.corp.internal:5432/payments"
+            - name: REDIS_URL
+              value: "redis://:r3d1sPassw0rd@cache.prod.internal:6379/0"
+            - name: AWS_ACCESS_KEY_ID
+              value: "AKIAIOSFODNN7EXAMPLE"
+            - name: AWS_SECRET_ACCESS_KEY
+              value: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+            - name: STRIPE_SECRET_KEY
+              value: "sk_live_ABCDEFGHIJKLMNOPQRSTUVWXabcdefgh"
+          # kubeconfig service account token (example)
+          # token: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50In0.signature

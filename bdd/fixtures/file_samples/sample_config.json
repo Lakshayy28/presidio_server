@@ -1,0 +1,44 @@
+{
+  "_comment": "Sample application config — intentionally contains PII and credentials for sanitizer testing",
+  "application": {
+    "name": "payments-service",
+    "environment": "production",
+    "contact": "alice.johnson@securecorp.com",
+    "support_phone": "(415) 555-0192"
+  },
+  "database": {
+    "primary_url": "postgres://admin:Passw0rd!@prod-db.corp.internal:5432/payments",
+    "replica_url": "postgres://readonly:R3ad0nlyP@ss@replica-db.corp.internal:5432/payments",
+    "jdbc_url": "jdbc:postgresql://prod-rds.internal:5432/payments?user=dbadmin&password=secret123"
+  },
+  "cache": {
+    "redis_url": "redis://:r3d1sPassw0rd@cache.prod.internal:6379/0"
+  },
+  "aws": {
+    "region": "us-east-1",
+    "access_key_id": "AKIAIOSFODNN7EXAMPLE",
+    "secret_access_key": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+    "s3_bucket": "payments-docs-prod"
+  },
+  "payment_gateway": {
+    "stripe_secret_key": "sk_live_ABCDEFGHIJKLMNOPQRSTUVWXabcdefgh",
+    "webhook_secret": "whsec_ABCDEFGHIJKLMNOPQRSTUVwxyz1234567890AB"
+  },
+  "notifications": {
+    "sendgrid_api_key": "SG.ABCDEFGHIJklmnopqrst.ABCDEFGHIJ0123456789abcdefghij0123456789AB",
+    "slack_webhook": "https://hooks.slack.com/services/T00000001/B00000001/XXXXXXXXXXXXXXXXXXXXXXXX"
+  },
+  "test_customer": {
+    "name": "John Smith",
+    "ssn": "323-45-6789",
+    "credit_card": "4532015112830366",
+    "email": "john.smith@testcorp.com",
+    "phone": "415-555-0198",
+    "iban": "GB29NWBK60161331926819"
+  },
+  "internal": {
+    "service_mesh_ip": "10.240.0.15",
+    "management_host": "payments-db-primary.prod.internal",
+    "mac_address": "00:1A:2B:3C:4D:5E"
+  }
+}

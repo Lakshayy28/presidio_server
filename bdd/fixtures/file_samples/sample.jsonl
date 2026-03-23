@@ -1,0 +1,4 @@
+{"timestamp":"2024-03-15T08:00:00Z","level":"INFO","service":"payments","message":"Processing payment for customer alice.johnson@securecorp.com, card 4539-1488-0343-6467"}
+{"timestamp":"2024-03-15T08:01:00Z","level":"WARN","service":"auth","message":"Failed login from 10.240.0.15, user bob.williams@securecorp.com"}
+{"timestamp":"2024-03-15T08:02:00Z","level":"ERROR","service":"payments","message":"DB connection failed: postgres://admin:Passw0rd!@db.prod.internal:5432/payments"}
+{"timestamp":"2024-03-15T08:03:00Z","level":"INFO","service":"hr","message":"Employee SSN 323-45-6789, phone +1-555-867-5309 processed for payroll"}
