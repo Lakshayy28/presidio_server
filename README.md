@@ -1,20 +1,28 @@
-# SafeChat Presidio Server
+# SafeChat Presidio PII Engine
 
-A standalone FastAPI service that exposes Microsoft Presidio's PII analysis and
-anonymization over HTTP. The VS Code extension calls this server instead of
-spawning Python directly — giving you full control over the Python environment
-and making the extension dependency-free.
+A lean FastAPI service that exposes Microsoft Presidio's NLP-powered PII detection
+and anonymization for **Human PII & Financial Data only**. All developer secrets,
+CI/CD tokens, and infrastructure configs are handled by the TypeScript extension
+(regex + AST + Shannon entropy).
+
+The VS Code extension calls this server's `/sanitize` endpoint instead of spawning
+Python directly — giving you full control over the Python environment and making
+the extension dependency-free.
+
+## Active Entities (12)
+
+`PERSON`, `EMAIL_ADDRESS`, `PHONE_NUMBER`, `CREDIT_CARD`, `US_SSN`, `IBAN_CODE`, `US_BANK_NUMBER`, `CRYPTO`, `IP_ADDRESS`, `URL`, `CARD_CVV`, `CARD_EXPIRY`
+
+> **Anti-hallucination:** `US_DRIVER_LICENSE` and `US_ITIN` are intentionally excluded — they cause false positives on source code (e.g. `apiVersion: v1` triggers a driver's license match).
 
 ## Endpoints
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `GET` | `/health` | Liveness check |
-| `POST` | `/analyze` | Detect PII entities (no masking) |
-| `POST` | `/anonymize` | Mask PII entities, return anonymized text |
+| `GET` | `/health` | Liveness check (returns entity count) |
 | `POST` | `/sanitize` | Analyze + anonymize in a single call *(used by extension)* |
-| `GET` | `/docs` | Interactive Swagger UI |
-| `GET` | `/redoc` | ReDoc API reference |
+| `GET` | `/docs` | Interactive Swagger UI (auto-generated) |
+| `GET` | `/redoc` | ReDoc API reference (auto-generated) |
 
 ## Setup
 
@@ -64,21 +72,20 @@ Then update the VS Code setting:
 
 ## API Reference
 
-### `POST /sanitize` *(primary endpoint used by the extension)*
+### `POST /sanitize` *(the only endpoint the extension uses)*
 
 **Request:**
 ```json
 {
   "text": "Hello, John Doe. Email: john@example.com",
-  "language": "en",
-  "replacement_format": "<{entity_type}>"
+  "rules": { "PERSON": "replace", "EMAIL_ADDRESS": "mask" }
 }
 ```
 
 **Response:**
 ```json
 {
-  "sanitized_text": "Hello, <PERSON>. Email: <EMAIL_ADDRESS>",
+  "sanitized_text": "Hello, <PERSON>. Email: ****************",
   "was_modified": true,
   "entities_found": [
     { "entity_type": "PERSON", "start": 7, "end": 15, "score": 0.85, "text_snippet": "John Doe" },
@@ -87,32 +94,35 @@ Then update the VS Code setting:
 }
 ```
 
-### `POST /analyze` *(detection only)*
+**Request body:**
 
-**Request:**
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `text` | string | — | Text to process |
+| `rules` | object | `{}` | Per-entity operation: `replace`, `mask`, `redact`, or `hash` |
+
+### `GET /health`
+
 ```json
-{
-  "text": "My card number is 4111 1111 1111 1111",
-  "language": "en"
-}
+{ "status": "ok", "service": "safechat-presidio-pii-engine", "entities": 12 }
 ```
 
-**Response:**
-```json
-{
-  "entities_found": [
-    { "entity_type": "CREDIT_CARD", "start": 18, "end": 37, "score": 1.0, "text_snippet": "4111 1111 1111 1111" }
-  ]
-}
+## Architecture
+
 ```
-
-### `POST /anonymize` *(mask only)*
-
-Same as `/sanitize` but always returns `anonymized_text` — does not return `was_modified`.
+presidio_server/
+├── main.py               # FastAPI app — /health + /sanitize only
+├── profiles.py           # ACTIVE_ENTITIES list (12 types, no hallucination-prone ones)
+├── recognizers/
+│   ├── __init__.py       # Exports CardCvvRecognizer, CardExpiryRecognizer
+│   └── financial.py      # Card CVV + Card Expiry pattern recognizers
+├── requirements.txt
+└── bdd/                  # BDD test suite (financial + file format tests)
+```
 
 ## Testing
 
-The `bdd/` directory contains a full BDD + regression test suite (225 tests) covering financial PII, developer secrets, infrastructure credentials, CI/CD tokens, custom recognizers, file formats, and Splunk logs.
+The `bdd/` directory contains BDD + regression tests covering financial PII, custom recognizers, file formats, and Splunk logs.
 
 ### 1. Install test dependencies
 
@@ -133,15 +143,10 @@ cd bdd
 pytest tests/ -v
 ```
 
-Reports are written to `bdd/reports/`:
-- `test_report.html` — self-contained HTML report
-- `allure-results/` — raw data for Allure (generate with `allure serve reports/allure-results`)
-
-Run a specific marker subset:
+Run a specific subset:
 
 ```bash
 pytest tests/ -v -m financial       # financial PII only
-pytest tests/ -v -m developer       # developer secrets only
 pytest tests/ -v -m smoke           # fast smoke subset
 ```
 
@@ -152,8 +157,8 @@ FROM python:3.11-slim
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt && python -m spacy download en_core_web_lg
-COPY main.py .
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+COPY . .
+CMD ["uvicorn", "presidio_server.main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
 ```bash
@@ -163,11 +168,10 @@ docker run -p 8000:8000 safechat-presidio
 
 ## VS Code Extension Integration
 
-Open VS Code Settings and configure:
-
 ```json
 "safechat.presidioApiUrl": "http://localhost:8000"
 ```
 
 If the server is unreachable, the extension automatically falls back to its
-built-in regex masking engine (catches API keys, tokens, Bearer headers, etc.)
+built-in regex + AST + Shannon entropy engines (catches all secrets; only
+human PII like names requires the NLP server).

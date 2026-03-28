@@ -5,3 +5,6 @@ test.yaml
 *.pyc
 **/.pytest_cache/
 bdd/reports
+.DS_Store
+bdd/fixtures/file_samples/obj
+
