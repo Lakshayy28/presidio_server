@@ -9,8 +9,10 @@ handled by the TypeScript extension (regex + AST + Shannon entropy).
 
 Endpoints
 ---------
-GET  /health    — liveness check
-POST /sanitize  — analyze + anonymize in one call (the only endpoint the extension uses)
+GET  /health         — liveness check
+POST /sanitize       — analyze + anonymize in one call (the only endpoint the extension uses)
+GET  /docs/ui        — documentation web UI
+GET  /docs/entities  — JSON catalogue of active entity types
 """
 
 import os
@@ -19,6 +21,7 @@ from typing import Optional
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
 from presidio_analyzer import AnalyzerEngine, RecognizerRegistry, RecognizerResult
@@ -39,9 +42,11 @@ anonymizer = AnonymizerEngine()
 try:
     from presidio_server.recognizers import CardCvvRecognizer, CardExpiryRecognizer
     from presidio_server.profiles import ACTIVE_ENTITIES
+    from presidio_server.docs_ui import get_docs_html, BUILTIN_ENTITIES, CUSTOM_ENTITY_GROUPS
 except ImportError:
     from recognizers import CardCvvRecognizer, CardExpiryRecognizer  # type: ignore[no-redef]
     from profiles import ACTIVE_ENTITIES  # type: ignore[no-redef]
+    from docs_ui import get_docs_html, BUILTIN_ENTITIES, CUSTOM_ENTITY_GROUPS  # type: ignore[no-redef]
 
 registry.add_recognizer(CardCvvRecognizer())
 registry.add_recognizer(CardExpiryRecognizer())
@@ -157,6 +162,20 @@ def _build_operators(
 @app.get("/health", summary="Liveness check")
 def health():
     return {"status": "ok", "service": "safechat-presidio-pii-engine", "entities": len(ACTIVE_ENTITIES)}
+
+
+@app.get("/docs/ui", response_class=HTMLResponse, include_in_schema=False, summary="Documentation web UI")
+def docs_ui_page():
+    return get_docs_html()
+
+
+@app.get("/docs/entities", summary="JSON catalogue of active entity types")
+def docs_entities():
+    return {
+        "active_entities": ACTIVE_ENTITIES,
+        "builtin": BUILTIN_ENTITIES,
+        "custom": CUSTOM_ENTITY_GROUPS,
+    }
 
 
 @app.post("/sanitize", response_model=SanitizeResponse, summary="Analyze + anonymize in one call")

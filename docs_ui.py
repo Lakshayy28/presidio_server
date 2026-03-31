@@ -2,10 +2,13 @@
 Documentation web UI — served at GET /docs/ui
 ───────────────────────────────────────────────
 A single self-contained HTML page (no external dependencies) that:
-  1. Lists all built-in Presidio entity types
-  2. Lists all custom recognizers grouped by profile
+  1. Lists active built-in Presidio entity types (NLP/PII only)
+  2. Lists custom recognizers in the financial profile
   3. Documents all 5 anonymizer operations
   4. Provides a YAML generator for adding custom recognizer rules
+
+Also exports BUILTIN_ENTITIES and CUSTOM_ENTITY_GROUPS consumed
+by the GET /docs/entities JSON endpoint.
 """
 
 from __future__ import annotations
@@ -14,25 +17,18 @@ from __future__ import annotations
 # Entity catalogue — mirrors the recognizers we ship
 # ─────────────────────────────────────────────────────────────────────────────
 
+# Active NLP/PII entities — mirrors ACTIVE_ENTITIES in profiles.py
 BUILTIN_ENTITIES = [
-    {"entity": "CREDIT_CARD",       "description": "Credit/debit card numbers (Visa, MC, Amex, etc.)", "example": "4111 1111 1111 1111"},
-    {"entity": "CRYPTO",            "description": "Cryptocurrency wallet addresses (Bitcoin, Ethereum)", "example": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"},
-    {"entity": "DATE_TIME",         "description": "Dates and timestamps",                              "example": "March 22, 2026"},
-    {"entity": "EMAIL_ADDRESS",     "description": "Email addresses",                                   "example": "john.doe@example.com"},
-    {"entity": "IBAN_CODE",         "description": "International Bank Account Numbers",                 "example": "GB29NWBK60161331926819"},
-    {"entity": "IP_ADDRESS",        "description": "IPv4 and IPv6 addresses",                            "example": "203.0.113.42"},
-    {"entity": "LOCATION",          "description": "Physical locations, addresses, cities, countries",   "example": "1600 Pennsylvania Avenue"},
-    {"entity": "MAC_ADDRESS",       "description": "Network hardware (MAC) addresses",                   "example": "00:1A:2B:3C:4D:5E"},
-    {"entity": "MEDICAL_LICENSE",   "description": "Medical license numbers",                            "example": "DEA# AB1234567"},
-    {"entity": "NRP",               "description": "Nationalities, religions, political groups",         "example": "British"},
-    {"entity": "PERSON",            "description": "Person names (first, last, full)",                   "example": "Jane Smith"},
-    {"entity": "PHONE_NUMBER",      "description": "Phone numbers (US and international)",               "example": "+1 (555) 123-4567"},
-    {"entity": "URL",               "description": "Web URLs",                                           "example": "https://example.com/api"},
-    {"entity": "US_BANK_NUMBER",    "description": "US bank account numbers",                            "example": "1234567890"},
-    {"entity": "US_DRIVER_LICENSE", "description": "US driver's license numbers",                        "example": "D12345678"},
-    {"entity": "US_ITIN",           "description": "US Individual Taxpayer ID Numbers",                  "example": "900-70-0000"},
-    {"entity": "US_PASSPORT",       "description": "US passport numbers",                                "example": "C12345678"},
-    {"entity": "US_SSN",            "description": "US Social Security Numbers",                         "example": "123-45-6789"},
+    {"entity": "CREDIT_CARD",    "description": "Credit/debit card numbers (Visa, MC, Amex, etc.)", "example": "4111 1111 1111 1111"},
+    {"entity": "CRYPTO",         "description": "Cryptocurrency wallet addresses (Bitcoin, Ethereum)", "example": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"},
+    {"entity": "EMAIL_ADDRESS",  "description": "Email addresses",                                   "example": "john.doe@example.com"},
+    {"entity": "IBAN_CODE",      "description": "International Bank Account Numbers",                 "example": "GB29NWBK60161331926819"},
+    {"entity": "IP_ADDRESS",     "description": "IPv4 and IPv6 addresses",                           "example": "203.0.113.42"},
+    {"entity": "PERSON",         "description": "Person names (first, last, full)",                  "example": "Jane Smith"},
+    {"entity": "PHONE_NUMBER",   "description": "Phone numbers (US and international)",              "example": "+1 (555) 123-4567"},
+    {"entity": "URL",            "description": "Web URLs",                                          "example": "https://example.com/api"},
+    {"entity": "US_BANK_NUMBER", "description": "US bank account numbers",                           "example": "1234567890"},
+    {"entity": "US_SSN",         "description": "US Social Security Numbers",                        "example": "123-45-6789"},
 ]
 
 CUSTOM_ENTITY_GROUPS = {
@@ -51,53 +47,9 @@ CUSTOM_ENTITY_GROUPS = {
         {"entity": "PAYMENT_REFERENCE", "description": "Transaction / payment reference IDs", "example": "TX-12345678", "pattern": r"UUID or alpha-numeric ref"},
         {"entity": "LOAN_ACCOUNT",      "description": "Loan / mortgage account numbers", "example": "loan#: LA12345678", "pattern": r"loan/mortgage context + ID"},
     ],
-    "developer": [
-        {"entity": "AWS_ACCESS_KEY",       "description": "AWS IAM access key IDs (AKIA/ASIA prefix)", "example": "AKIAIOSFODNN7EXAMPLE", "pattern": r"AKIA[0-9A-Z]{16}"},
-        {"entity": "AWS_SECRET_KEY",       "description": "AWS IAM secret access keys (40-char)", "example": "aws_secret_access_key=wJalr...", "pattern": r"aws_secret_access_key\s*=\s*[A-Za-z0-9/+]{40}"},
-        {"entity": "GITHUB_TOKEN",         "description": "GitHub PATs, OAuth, fine-grained tokens", "example": "ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef12", "pattern": r"ghp_[A-Za-z0-9]{36}"},
-        {"entity": "GITLAB_TOKEN",         "description": "GitLab personal/project/deploy tokens", "example": "glpat-XXXXXXXXXXXXXXXXXXXX", "pattern": r"glpat-[A-Za-z0-9_-]{20,}"},
-        {"entity": "SLACK_TOKEN",          "description": "Slack bot/user/app tokens & webhooks", "example": "xoxb-1234-5678-abc", "pattern": r"xoxb-[0-9A-Za-z-]+"},
-        {"entity": "JWT_TOKEN",            "description": "JSON Web Tokens (three base64url segments)", "example": "eyJhbGciOiJIUzI1NiJ9.eyJ...", "pattern": r"eyJ[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]*"},
-        {"entity": "STRIPE_KEY",           "description": "Stripe API keys (sk_live/test, pk_, rk_)", "example": "sk_live_abc123...", "pattern": r"sk_(live|test)_[A-Za-z0-9]{24,}"},
-        {"entity": "SENDGRID_KEY",         "description": "SendGrid API keys", "example": "SG.xxxxx.yyyyy", "pattern": r"SG\.[A-Za-z0-9-_]{22}\.[A-Za-z0-9-_]{43}"},
-        {"entity": "TWILIO_SID",           "description": "Twilio Account SIDs and auth tokens", "example": "AC1234567890abcdef1234567890abcdef", "pattern": r"AC[a-f0-9]{32}"},
-        {"entity": "NPM_TOKEN",            "description": "NPM registry tokens", "example": "npm_ABCDEFabcdef1234567890abcdefABCDEF12", "pattern": r"npm_[A-Za-z0-9]{36}"},
-        {"entity": "HASHICORP_VAULT_TOKEN","description": "HashiCorp Vault service/batch/recovery tokens", "example": "hvs.CAESIJzYm...", "pattern": r"hvs\.[A-Za-z0-9]+"},
-        {"entity": "GENERIC_API_KEY",      "description": "Generic API key/secret/password assignments", "example": "api_key=AbCdEfGhIj...", "pattern": r"api_key\s*=\s*[A-Za-z0-9]{20,}"},
-        {"entity": "BEARER_TOKEN",         "description": "Authorization: Bearer tokens", "example": "Authorization: Bearer eyJ...", "pattern": r"Bearer\s+[A-Za-z0-9-._~+/]+=*"},
-        {"entity": "PRIVATE_KEY_BLOCK",    "description": "PEM private key headers (RSA, EC, etc.)", "example": "-----BEGIN RSA PRIVATE KEY-----", "pattern": r"-----BEGIN\s+.*PRIVATE\s+KEY-----"},
-        {"entity": "CERTIFICATE_BLOCK",    "description": "PEM certificate / CSR block headers", "example": "-----BEGIN CERTIFICATE-----", "pattern": r"-----BEGIN\s+CERTIFICATE-----"},
-    ],
-    "infrastructure": [
-        {"entity": "DB_CONNECTION_STRING",  "description": "SQL/NoSQL database connection URLs", "example": "postgres://user:pass@host/db", "pattern": r"postgres://[^\s]+"},
-        {"entity": "AZURE_CONN_STRING",     "description": "Azure Storage/ServiceBus/CosmosDB connection strings", "example": "DefaultEndpointsProtocol=https;AccountName=...", "pattern": r"DefaultEndpointsProtocol=...AccountKey=..."},
-        {"entity": "JDBC_URL",              "description": "Java JDBC connection URLs", "example": "jdbc:mysql://host:3306/db", "pattern": r"jdbc:mysql://..."},
-        {"entity": "REDIS_URL",             "description": "Redis connection URIs", "example": "redis://:secret@host:6379/0", "pattern": r"redis(s)?://[^\s]+"},
-        {"entity": "MONGO_URL",             "description": "MongoDB standard and SRV URIs", "example": "mongodb+srv://user:pass@cluster", "pattern": r"mongodb(\+srv)?://[^\s]+"},
-        {"entity": "INTERNAL_HOSTNAME",     "description": "Internal hostnames (*.internal, *.corp, *.prod)", "example": "api.prod.internal", "pattern": r"*.internal, *.corp, *.prod"},
-        {"entity": "PRIVATE_IP_ADDRESS",    "description": "RFC 1918 private, loopback, link-local IPs", "example": "10.0.1.42", "pattern": r"10\.\d+\.\d+\.\d+"},
-        {"entity": "ENV_VARIABLE_VALUE",    "description": ".env secret variable assignments", "example": "DB_PASSWORD=super_secret", "pattern": r"[A-Z_]+SECRET\s*=\s*..."},
-        {"entity": "K8S_SECRET_VALUE",      "description": "Base64 values in Kubernetes Secret manifests", "example": "  password: c3VwZXJzZWNyZXQ=", "pattern": r"base64 in YAML data: blocks"},
-        {"entity": "CERTIFICATE_THUMBPRINT","description": "Certificate SHA-1/SHA-256 fingerprints", "example": "A1:B2:C3:D4:...", "pattern": r"([0-9A-Fa-f]{2}:){19}[0-9A-Fa-f]{2}"},
-    ],
-    "cicd": [
-        {"entity": "JENKINS_TOKEN",              "description": "Jenkins API tokens", "example": "JENKINS_TOKEN=abc123...", "pattern": r"jenkins.*token\s*[:=]\s*[A-Za-z0-9]{32,}"},
-        {"entity": "CIRCLECI_TOKEN",             "description": "CircleCI personal/project API tokens", "example": "CCIPAT_abcdef1234567890...", "pattern": r"CCIPAT_[A-Za-z0-9_]{40}"},
-        {"entity": "GITLAB_CI_TOKEN",            "description": "GitLab CI runner/trigger tokens", "example": "glrt-XXXXXXXXXXXXXXXXXXXX", "pattern": r"glrt-[A-Za-z0-9_-]{20,}"},
-        {"entity": "SONARQUBE_TOKEN",            "description": "SonarQube/Cloud analysis tokens", "example": "sqp_abcdef1234567890...", "pattern": r"sqp_[A-Za-z0-9]{40}"},
-        {"entity": "OPENSHIFT_TOKEN",            "description": "OpenShift/OCP4 API tokens (sha256~ format)", "example": "sha256~ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmno", "pattern": r"sha256~[A-Za-z0-9-_]{43}"},
-        {"entity": "K8S_SA_TOKEN",               "description": "Kubernetes service account bearer tokens", "example": "token: eyJhbGciOiJSUzI1...", "pattern": r"kubeconfig token: field"},
-        {"entity": "DOCKER_REGISTRY_CREDENTIAL", "description": "Docker config auth base64 entries", "example": '"auth": "dXNlcjpwYXNz"', "pattern": r'"auth"\s*:\s*"[A-Za-z0-9+/=]{20,}"'},
-        {"entity": "HELM_SECRET",                "description": "SOPS-encrypted Helm secret values", "example": "ENC[AES256_GCM,data:...,iv:...,tag:...]", "pattern": r"ENC\[AES256_GCM,...\]"},
-        {"entity": "TERRAFORM_TOKEN",            "description": "Terraform Cloud / TFE API tokens", "example": "atlasv1.XXXXXXXXX...", "pattern": r"[A-Za-z0-9]{14}\.atlasv1\.[A-Za-z0-9]{67}"},
-        {"entity": "ANSIBLE_VAULT",              "description": "Ansible Vault AES256-encrypted blocks", "example": "$ANSIBLE_VAULT;1.1;AES256\\n3030...", "pattern": r"$ANSIBLE_VAULT;1.1;AES256"},
-        {"entity": "GCP_SA_KEY",                 "description": "GCP service account JSON keys & emails", "example": '"type": "service_account"', "pattern": r'"type"\s*:\s*"service_account"'},
-        {"entity": "AZURE_SP_SECRET",            "description": "Azure Service Principal secrets & IDs", "example": "AZURE_CLIENT_SECRET=xxx", "pattern": r"AZURE_CLIENT_SECRET\s*=\s*..."},
-        {"entity": "BITBUCKET_APP_PASSWORD",     "description": "Bitbucket app passwords & access tokens", "example": "ATBBabcdef1234567890abcdefgh12", "pattern": r"ATBB[A-Za-z0-9]{28}"},
-        {"entity": "ARGOCD_TOKEN",               "description": "Argo CD API bearer tokens", "example": "ARGOCD_AUTH_TOKEN=eyJ...", "pattern": r"ARGOCD_AUTH_TOKEN\s*=\s*..."},
-    ],
+    # developer / infrastructure / cicd entities are now handled by the
+    # TypeScript regex+AST engine — they are intentionally absent here.
 }
-
 ANONYMIZER_OPERATIONS = [
     {
         "name": "replace",
@@ -308,9 +260,6 @@ def _build_html() -> str:
 
   <div class="nav" style="margin-bottom:.5rem;">
     <a href="#profile-financial">Financial</a>
-    <a href="#profile-developer">Developer</a>
-    <a href="#profile-infrastructure">Infrastructure</a>
-    <a href="#profile-cicd">CI/CD</a>
   </div>
 
   {profile_sections}
@@ -399,32 +348,20 @@ def _build_html() -> str:
     <thead><tr><th>Endpoint</th><th>Method</th><th>Description</th></tr></thead>
     <tbody>
       <tr><td class="mono">/health</td><td>GET</td><td>Liveness check</td></tr>
-      <tr><td class="mono">/profiles</td><td>GET</td><td>List available sanitization profiles</td></tr>
+      <tr><td class="mono">/sanitize</td><td>POST</td><td>Detect + anonymize PII in one call</td></tr>
       <tr><td class="mono">/docs/ui</td><td>GET</td><td>This documentation page</td></tr>
-      <tr><td class="mono">/docs/entities</td><td>GET</td><td>JSON catalogue of all entity types</td></tr>
-      <tr><td class="mono">/analyze</td><td>POST</td><td>Detect PII — returns findings without masking</td></tr>
-      <tr><td class="mono">/anonymize</td><td>POST</td><td>Detect + anonymize PII — returns masked text</td></tr>
-      <tr><td class="mono">/sanitize</td><td>POST</td><td>Detect + anonymize (recommended single-call endpoint)</td></tr>
+      <tr><td class="mono">/docs/entities</td><td>GET</td><td>JSON catalogue of active entity types</td></tr>
+      <tr><td class="mono">/docs</td><td>GET</td><td>Swagger UI (auto-generated by FastAPI)</td></tr>
+      <tr><td class="mono">/redoc</td><td>GET</td><td>ReDoc UI (auto-generated by FastAPI)</td></tr>
     </tbody>
   </table>
 
   <h3>Request Body (POST /sanitize)</h3>
   <pre style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:1rem;font-size:.82rem;color:var(--accent2);overflow-x:auto;">{{
   "text": "string (required) — the text to sanitize",
-  "language": "en (default)",
-  "profile": "financial | developer | infrastructure | cicd | full (optional)",
-  "entities": ["ENTITY_TYPE", "..."]  // explicit override (optional),
   "rules": {{
     "ENTITY_TYPE": "replace | mask | redact | hash | encrypt"
-  }},
-  "custom_recognizers": [
-    {{
-      "name": "EMPLOYEE_ID",
-      "pattern": "EMP-\\\\d{{6}}",
-      "score": 0.85,
-      "context": ["employee", "staff", "id"]
-    }}
-  ]
+  }}
 }}</pre>
 
 </div>

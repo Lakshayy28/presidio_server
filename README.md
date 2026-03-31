@@ -44,31 +44,17 @@ python -m spacy download en_core_web_lg
 
 ### 3. Start the server
 
-```bash
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-```
-
-Or via Python directly:
+Run from the **workspace root** (parent of `presidio_server/`) with `PYTHONPATH` set so
+Python can resolve the `presidio_server` package:
 
 ```bash
-python main.py
+cd /path/to/wf-sanitize-ext
+PYTHONPATH="$PWD" presidio_server/.venv/bin/uvicorn presidio_server.main:app --host 0.0.0.0 --port 8000 --reload
 ```
+
+Or via the VS Code task: `Cmd+Shift+P` → **Tasks: Run Task** → **Start Presidio Server**.
 
 The server listens on `http://localhost:8000` by default.
-
-To use a different port:
-
-```bash
-SAFECHAT_PORT=9000 python main.py
-# or
-uvicorn main:app --port 9000
-```
-
-Then update the VS Code setting:
-
-```json
-"safechat.presidioApiUrl": "http://localhost:9000"
-```
 
 ## API Reference
 
